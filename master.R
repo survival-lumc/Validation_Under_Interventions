@@ -5,13 +5,6 @@
 #------------------------
 
 #----
-#set work directory
-#setwd("C:\\Users\\rkeogh\\OneDrive - London School of Hygiene and Tropical Medicine\\counterfactual_prediction\\simulation\\final_simulation_files")
-#setwd("C:\\Users\\Ruth Keogh\\OneDrive - London School of Hygiene and Tropical Medicine\\counterfactual_prediction\\simulation\\final_simulation_files")
-setwd("M:\\1. Onderzoek\\Collaborations\\Ruth Keogh\\code\\final_simulation_files\\github_simulation_files")
-.libPaths("M:/MyDocs/R/win-library/4.0")
-
-#----
 #libraries
 library(tidyverse)
 library(ggpubr)
@@ -163,10 +156,10 @@ save(table_ipa_wide,file=paste0("results_addhaz/table_ipa_wide_","scenario_",sce
 #------------------------
 
 #number of simulations
-Nsim <- 10
+Nsim <- 1000
 
 #sample size 
-n=1000
+n=3000
 
 # specify the scenario (+ plotting limits)
 # scenario 1: base scenario same dgm for development and validation data (gamma.0=-1, gamma.L = 0.5, alpha.0 = -2, alpha.L = 0.5, alpha. A= -0.5, alpha.U= 0.5)
