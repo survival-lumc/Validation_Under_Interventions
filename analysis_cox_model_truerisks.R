@@ -40,7 +40,7 @@ dat.true.long<-rbind(dat.true.long.A1,dat.true.long.A0)
 #MSM-IPTW analysis using a Cox model
 #-----------------
 
-cox.msm.true=coxph(Surv(time,time.stop,event)~A+Alag1+Alag2+Alag3+Alag4+L.0,data=dat.true.long)
+cox.msm.true=coxph(Surv(time,time.stop,event)~A+Alag1+Alag2+Alag3+Alag4+L.0,data=dat.true.long,control = coxph.control(timefix = FALSE))
 
 #baseline cumulative hazard
 cumhaz=basehaz(cox.msm.true,centered=F)$hazard
