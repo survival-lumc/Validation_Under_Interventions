@@ -77,6 +77,21 @@ D.obs=ifelse(is.na(T.obs),0,1)
 T.obs=ifelse(is.na(T.obs),5,T.obs)
 neghaz
 
+#----
+#generate standard (uninformative) censoring times and adjust event times T.obs, and event indicator D.obs accordingly
+
+if(censoring==TRUE)
+{
+  u.c=runif(n,0,1)
+  haz.c=0.1 #without events about 40% censored before t=5
+  #haz=0.05 #without events about 22% censored before t=5
+  C =-log(u.c)/haz.c
+  #sum(C<5)/n
+
+  T.obs=ifelse(T.obs>C ,C, T.obs)
+  D.obs=ifelse(T.obs<C & T.obs < 5,1,0)
+}
+  
 #-----
 #Create data frame
 
@@ -86,7 +101,7 @@ dat=data.frame(id=1:n,T.obs,D.obs,A,L)
 
 #-----
 #set A to 0 in time periods after event/censoring
-
+ 
 dat$A.1=ifelse(dat$T.obs<1,0,dat$A.1)
 dat$A.2=ifelse(dat$T.obs<2,0,dat$A.2)
 dat$A.3=ifelse(dat$T.obs<3,0,dat$A.3)
