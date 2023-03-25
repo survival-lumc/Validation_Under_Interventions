@@ -1,2 +1,11 @@
-# ValidationUnderInterventions
-Performance evaluation of predictions under hypothetical interventions using longitudinal observational data
+# Risk prediction under hypothetical interventions: evaluation of predictive performance using longitudinal observational data
+Code accompanying the manuscript
+
+"Risk prediction under hypothetical interventions: evaluation of predictive performance using longitudinal observational data"
+
+Ruth Keogh (1) and Nan van Geloven (2)
+
+(1) Faculty of Epidemiology and Population Health and Department of Medical Statistics, London School of Hygiene & Tropical Medicine, London, UK
+(2) Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, the Netherlands
+
+
