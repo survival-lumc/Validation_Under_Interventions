@@ -1,7 +1,7 @@
-# Risk prediction under hypothetical interventions: evaluation of predictive performance using longitudinal observational data
+# Prediction under hypothetical interventions: evaluation of performance using longitudinal observational data
 Code accompanying the manuscript
 
-"Risk prediction under hypothetical interventions: evaluation of predictive performance using longitudinal observational data"
+"Prediction under hypothetical interventions: evaluation of performance using longitudinal observational data"
 
 Ruth Keogh (1) and Nan van Geloven (2)
 
