@@ -49,11 +49,11 @@ cut_points_1=c(0,quantile(risk1_exp[,5],probs=seq(0.1,0.9,0.1)),1)
 
 risk0_group=cut(risk0_exp[,5],breaks=cut_points_0,include.lowest = T,labels = F)
 dat.risk0.grp=data.frame(id=1:n,risk0_group)
-dat.0.merge=merge(dat.risk0.grp,dat.0,by="id")
+dat.0.merge=merge(dat.risk0.grp, dat.long.val %>% filter(in.dat.0==1), by="id")
 
 risk1_group=cut(risk1_exp[,5],breaks=cut_points_1,include.lowest = T,labels = F)
 dat.risk1.grp=data.frame(id=1:n,risk1_group)
-dat.1.merge=merge(dat.risk1.grp,dat.1,by="id")
+dat.1.merge=merge(dat.risk1.grp,dat.long.val %>% filter(in.dat.1==1),by="id")
 
 #-----
 #mean predicted risk within each decile
@@ -64,7 +64,7 @@ calib_risk1_group[i,,1]<-sapply(FUN=function(x){mean(risk1_exp[,5][risk1_group==
 #-----
 #observed risk in each decile of risk - "never treated"
 
-km.0.grp=survfit(Surv(time,time.stop,event)~strata(risk0_group),data=dat.0.merge,weights = dat.0.merge$ipw)
+km.0.grp=survfit(Surv(time,time.stop,event)~strata(risk0_group),data=dat.0.merge, weights = dat.0.merge$ipw0)
 
 risk0_obs_grp<-rep(NA,10)
 for(k in 1:10){

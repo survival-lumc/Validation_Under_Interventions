@@ -32,75 +32,67 @@ risk1_exp=sapply(FUN=function(h){1-exp(-(ah.stepfun.int(h)+ah.stepfun.A(h)+ah.st
 risk1_exp=sapply(FUN=function(h){1-exp(-(ah.stepfun.int(h)+ah.stepfun.A(h)+ah.stepfun.Alag1(h)*(h>1)+ah.stepfun.Alag2(h)*(h>2)+
                                            ah.stepfun.Alag3(h)*(h>3)+ah.stepfun.Alag4(h)*(h>4)+ah.stepfun.L(h)*L.baseline.dat))},t.hor)
 
+#------------------------------
+#------------------------------
+#OBSERVERD risks under the two treatment strategies 'ALWAYS TREATED' and 'NEVER TREATED'
+#------------------------------
+#------------------------------
 
 #-----------------
 #'Observed' risks up to times 1:5, under the 'NEVER TREATED' strategy
 #Obtained using censoring and weighting
 #-----------------
 
-#---
-#create data set which will be for people in the A=0 group at baseline
-
-dat.0=dat.long.val
-
 #fit weights model for people untreated at time 0
-wt.mod=glm(A~L,family = "binomial",data=dat.0[dat.0$Alag1==0,])
+wt.mod=glm(A~L,family = "binomial",data=dat.long.val[dat.long.val$Alag1==0,])
 
 #predicted probability that A[t]=0 conditional on A[t-1]=0 and conditional on L[t]
-pred.wt=predict(wt.mod,type = "response",newdata = dat.0)
-dat.0$wt=1-pred.wt
+pred.wt0=predict(wt.mod,type = "response",newdata = dat.long.val)
+dat.long.val$wt0=1-pred.wt0
 
 #Obtain the IPW at each time using cumulative product of 1/wt up to that time
-dat.0=dat.0 %>% group_by(id) %>% mutate(ipw=1/cumprod(wt))
+dat.long.val = dat.long.val %>% group_by(id) %>% mutate(ipw0=1/cumprod(wt0))
 
-#Now impose the artificial censoring when people deviate from the 'never treated' strategy
-dat.0=dat.0 %>%group_by(id) %>%mutate(A.baseline=first(A))
-dat.0=dat.0[dat.0$A==0,]
+#------------------
+#Now impose the artificial censoring when people deviate from the 'never treated' strategy by filtering on indicator 'in.dat.0'
+#-----------------
+
+dat.long.val = dat.long.val %>%group_by(id) %>%mutate(A.baseline=first(A))
+dat.long.val$in.dat.0 = (dat.long.val$A==0)
 
 #---
 #weighted Kaplan-Meier - using unstabilized weights
-km.0=survfit(Surv(time,time.stop,event)~1,data=dat.0,weights = dat.0$ipw)
-
-step.risk0.obs=stepfun(km.0$time,c(1,km.0$surv))#step function giving survival probability at any time
+km.0=survfit(Surv(time,time.stop,event)~1, data=dat.long.val %>% filter(in.dat.0==1), weights = ipw0)
+step.risk0.obs=stepfun(km.0$time,c(1,km.0$surv)) #step function giving survival probability at any time
 
 #estimated 'observed' risk at times 1:5
 risk0_obs=1-step.risk0.obs(1:5)
 
 #-----------------
-#OBSERVED RISKS
-##'Observed' risks up to times 1:5, under the 'always treated' strategy
+#'Observed' risks up to times 1:5, under the 'ALWAYS TREATED' strategy
 #Note that under our data generating mechanism people always continue treatment after they start
 #i.e. there are no transitions from A=1 to A=0
 #so we don't need time-dependent weights under the 'always treated' strategy
 #-----------------
 
-#---
-#create data set which will be for people in the A=1 group at baseline
-
-dat.1=dat.long.val
-
 #fit weights model for people treated at time 0
-wt.mod.baseline=glm(A~L,family = "binomial",data=dat.1[dat.1$visit==1,])
+wt.mod.baseline=glm(A~L,family = "binomial",data=dat.long.val[dat.long.val$visit==1,])
 
 #predicted probability that A[0]=1 conditional on A[-1]=0 (which is true for everyone) and conditional on L[0]
-pred.wt.baseline=predict(wt.mod.baseline,type = "response",newdata = dat.1[dat.1$visit==1,])
+pred.wt1.baseline=predict(wt.mod.baseline,type = "response",newdata = dat.long.val[dat.long.val$visit==1,])
 
 #Obtain the IPW at each time (which is the same at each time here)
-dat.1$wt=0
-dat.1$wt[dat.1$visit==1]=1/pred.wt.baseline
-dat.1=dat.1 %>%group_by(id) %>%mutate(ipw=sum(wt))
+dat.long.val$wt1 = 0
+dat.long.val$wt1[dat.long.val$visit==1] = 1/pred.wt1.baseline
+dat.long.val = dat.long.val %>% group_by(id) %>% mutate(ipw1=sum(wt1))
 
-#Now impose the artificial censoring when people deviate from the 'always treated' strategy
-#Note this is easy because once a person starts treatment they always continue, in this example
-dat.1=dat.1 %>%group_by(id) %>%mutate(A.baseline=first(A))
-
-dat.1=dat.1[dat.1$A.baseline==1,]
+#Now impose the artificial censoring when people deviate from the 'always treated' strategy by filtering on indicator 'in.dat.1'
+dat.long.val$in.dat.1 = (dat.long.val$A.baseline==1)
 
 #---
 #weighted Kaplan-Meier
-km.1=survfit(Surv(time,time.stop,event)~1,data=dat.1,weights = dat.1$ipw)
-
-step.risk1.obs=stepfun(km.1$time,c(1,km.1$surv))#step function giving survival probability at any time
+km.1=survfit(Surv(time,time.stop,event)~1,data=dat.long.val %>% filter(in.dat.1==1),weights = ipw1)
+step.risk1.obs=stepfun(km.1$time,c(1,km.1$surv)) #step function giving survival probability at any time
 
 #estimated 'observed' risk at times 1:5
 risk1_obs=1-step.risk1.obs(1:5)

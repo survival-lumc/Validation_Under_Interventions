@@ -34,12 +34,12 @@ calib_risk0_group<-array(dim=c(Nsim,10,5))
 calib_risk1_group<-array(dim=c(Nsim,10,5))
 
 #discrimination
-disc_cindex<-matrix(nrow=Nsim,ncol=12)
-disc_auct<-matrix(nrow=Nsim,ncol=12)
+disc_cindex<-matrix(nrow=Nsim,ncol=10)
+disc_auct<-matrix(nrow=Nsim,ncol=10)
 
 #overall prediction error
-brier_raw <- matrix(nrow=Nsim, ncol=9)
-brier_ipa <- matrix(nrow=Nsim, ncol=9)
+brier_raw <- matrix(nrow=Nsim, ncol=8)
+brier_ipa <- matrix(nrow=Nsim, ncol=8)
 
 #----
 #simulation loop

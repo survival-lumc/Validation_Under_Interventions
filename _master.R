@@ -8,7 +8,7 @@
 #set work directory
 #setwd("C:\\Users\\rkeogh\\OneDrive - London School of Hygiene and Tropical Medicine\\counterfactual_prediction\\simulation\\final_simulation_files")
 #setwd("C:\\Users\\Ruth Keogh\\OneDrive - London School of Hygiene and Tropical Medicine\\counterfactual_prediction\\simulation\\final_simulation_files")
-setwd("M:\\1. Onderzoek\\Collaborations\\Ruth Keogh\\code\\final_simulation_files\\github_simulation_files_V2")
+setwd("M:\\1. Onderzoek\\Collaborations\\Ruth Keogh\\code\\final_simulation_files\\github_simulation_files_V3")
 .libPaths("M:/MyDocs/R/win-library/4.0")
 
 #----
@@ -45,9 +45,9 @@ n=3000
 #scenario 1: base scenario: same dgm for development and validation data 
 #scenario 2: different baseline hazard in development data: alpha.0 = - 1
 #scenario 3: as scenario 1 plus noise added to L (L*) when making predictions in the validation set 
-scenario<-1; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.9; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
-scenario<-2; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.45; calib_lim_high <- 0.9; calib_risk_lim_high <- 1; model <- " additive hazards model"
-scenario<-3; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.9; calib_risk_lim_high <- 0.8; model <- " additive hazards model"
+scenario<-1; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-2; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.45; calib_lim_high <- 0.95; calib_risk_lim_high <- 1; model <- " additive hazards model"
+scenario<-3; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8; model <- " additive hazards model"
 
 #perform analyses for Nsim simulated data sets of n individuals
 source("simulation_addhaz.R")
@@ -78,7 +78,7 @@ ggsave(descr_KM_plot,file=paste0("results_addhaz\\add_haz_marginal_risk_distribu
 #Figure 3 (scenario 1), Figure 4 (scenario 2), Figure 5 (scenario 3)
 ggsave(main_plots_together,file=paste0("results_addhaz\\add_haz_main_plots_together_","scenario_", scenario,".png"),width = 13, height = 20, units = "cm")
 #Supplementary Figures A1 (scenario 1) A2 (scenario 2) A3 (scenario 3)
-ggsave(appendix_plots_together,file=paste0("results_addhaz\\add_haz_appendix_plots_together_","scenario_", scenario,".png"),width = 13, height = 20, units = "cm")
+ggsave(appendix_plots_together,file=paste0("results_addhaz\\add_haz_appendix_plots_together_","scenario_", scenario,".png"),width = 13, height = 40/3, units = "cm")
 
 #---
 #save main tables
@@ -91,71 +91,71 @@ save(table_ipa_wide,file=paste0("results_addhaz/table_ipa_wide_","scenario_",sce
 # #---
 # #save raw result data
 # 
-# save(disc_cindex,file=paste0("results_addhaz/disc_cindex_","scenario_",scenario,".rda"))
-# save(disc_auct,file=paste0("results_addhaz/disc_auct_","scenario_",scenario,".rda"))
-# save(brier_raw,file=paste0("results_addhaz/brier_raw_","scenario_",scenario,".rda"))
-# save(brier_ipa,file=paste0("results_addhaz/brier_ipa_","scenario_",scenario,".rda"))
-# save(calib_risk0,file=paste0("results_addhaz/calib_risk0_","scenario_",scenario,".rda"))
-# save(calib_risk1,file=paste0("results_addhaz/calib_risk1_","scenario_",scenario,".rda"))
-# save(calib_risk0_group,file=paste0("results_addhaz/calib_risk0_group_","scenario_",scenario,".rda"))
-# save(calib_risk1_group,file=paste0("results_addhaz/calib_risk1_group_","scenario_",scenario,".rda"))
-# save(descriptives_scenario,file=paste0("results_addhaz/descriptives_","scenario_",scenario,".rda"))
-# 
-# #---
-# #save separate plots in png
-# 
-# ggsave(cindex_plot_0,file=paste0("results_addhaz\\cindex_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(cindex_plot_1,file=paste0("results_addhaz\\cindex_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(auct_plot_0,file=paste0("results_addhaz\\auct_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(auct_plot_1,file=paste0("results_addhaz\\auct_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(brier_plot_0,file=paste0("results_addhaz\\brier_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(brier_plot_1,file=paste0("results_addhaz\\brier_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(ipa_plot_0,file=paste0("results_addhaz\\ipa_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(ipa_plot_1,file=paste0("results_addhaz\\ipa_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(calib_risk_plot0,file=paste0("results_addhaz/calib_risk_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(calib_risk_plot1,file=paste0("results_addhaz/calib_risk_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(calib_risk0_group_plot,file=paste0("results_addhaz/calib_risk0_group_plot_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# ggsave(calib_risk1_group_plot,file=paste0("results_addhaz/calib_risk1_group_plot_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
-# 
-# #---
-# #save plots in rda
-# 
-# save(descr_KM_plot,file=paste0("results_addhaz/descr_KM_plot_","scenario_",scenario,".rda"))
-# save(main_plots_together,file=paste0("results_addhaz\\main_plots_together_","scenario_", scenario,".rda"))
-# save(appendix_plots_together,file=paste0("results_addhaz\\appendix_plots_together_","scenario_", scenario,".rda"))
-# 
-# save(cindex_plot_0,file=paste0("results_addhaz\\cindex_plot0_","scenario_", scenario,".rda"))
-# save(cindex_plot_1,file=paste0("results_addhaz\\cindex_plot1_","scenario_", scenario,".rda"))
-# save(auct_plot_0,file=paste0("results_addhaz\\auct_plot0_","scenario_", scenario,".rda"))
-# save(auct_plot_1,file=paste0("results_addhaz\\auct_plot1_","scenario_", scenario,".rda"))
-# save(brier_plot_0,file=paste0("results_addhaz\\brier_plot0_","scenario_", scenario,".rda"))
-# save(brier_plot_1,file=paste0("results_addhaz\\brier_plot1_","scenario_", scenario,".rda"))
-# save(ipa_plot_0,file=paste0("results_addhaz\\ipa_plot0_","scenario_", scenario,".rda"))
-# save(ipa_plot_1,file=paste0("results_addhaz\\ipa_plot1_","scenario_", scenario,".rda"))
-# save(file=paste0("results_addhaz/calib_risk_plot0_","scenario_", scenario,".rda"),plot=calib_risk_plot0)
-# save(file=paste0("results_addhaz/calib_risk_plot1_","scenario_", scenario,".rda"),plot=calib_risk_plot1)
-# save(file=paste0("results_addhaz/calib_risk0_group_plot_","scenario_", scenario,".rda"),plot=calib_risk0_group_plot)
-# save(file=paste0("results_addhaz/calib_risk1_group_plot_","scenario_", scenario,".rda"),plot=calib_risk1_group_plot)
-# 
-# #--------------
-# # arrange descriptive KM plots from different scenarios together in one plot
-# 
-# descr_KM_plot1 <- descr_KM_plot + ylim(0,0.8) #after running scenario 1 (note same as scenario 3)
-# descr_KM_plot2 <- descr_KM_plot + ylim(0,0.8) #after running scenario 2
-# KMplots_together <- ggarrange(descr_KM_plot1, descr_KM_plot2,
-#                              nrow=1,
-#                              common.legend=TRUE,legend="bottom")
-# KMplots_together
-# ggsave(KMplots_together,file=paste0("results_addhaz\\add_haz_KM_plots_together.png"),width = 20, units = "cm")
-# 
-# 
-# #------------------------------
-# #render latex code of main tables
-# 
-# xtable(table_OErisk_wide)
-# xtable(table_cindex_wide)
-# xtable(table_auct_wide)
-# xtable(table_ipa_wide)
+save(disc_cindex,file=paste0("results_addhaz/disc_cindex_","scenario_",scenario,".rda"))
+save(disc_auct,file=paste0("results_addhaz/disc_auct_","scenario_",scenario,".rda"))
+save(brier_raw,file=paste0("results_addhaz/brier_raw_","scenario_",scenario,".rda"))
+save(brier_ipa,file=paste0("results_addhaz/brier_ipa_","scenario_",scenario,".rda"))
+save(calib_risk0,file=paste0("results_addhaz/calib_risk0_","scenario_",scenario,".rda"))
+save(calib_risk1,file=paste0("results_addhaz/calib_risk1_","scenario_",scenario,".rda"))
+save(calib_risk0_group,file=paste0("results_addhaz/calib_risk0_group_","scenario_",scenario,".rda"))
+save(calib_risk1_group,file=paste0("results_addhaz/calib_risk1_group_","scenario_",scenario,".rda"))
+save(descriptives_scenario,file=paste0("results_addhaz/descriptives_","scenario_",scenario,".rda"))
+
+#---
+#save separate plots in png
+
+ggsave(cindex_plot_0,file=paste0("results_addhaz\\cindex_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(cindex_plot_1,file=paste0("results_addhaz\\cindex_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(auct_plot_0,file=paste0("results_addhaz\\auct_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(auct_plot_1,file=paste0("results_addhaz\\auct_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(brier_plot_0,file=paste0("results_addhaz\\brier_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(brier_plot_1,file=paste0("results_addhaz\\brier_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(ipa_plot_0,file=paste0("results_addhaz\\ipa_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(ipa_plot_1,file=paste0("results_addhaz\\ipa_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(calib_risk_plot0,file=paste0("results_addhaz/calib_risk_plot0_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(calib_risk_plot1,file=paste0("results_addhaz/calib_risk_plot1_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(calib_risk0_group_plot,file=paste0("results_addhaz/calib_risk0_group_plot_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+ggsave(calib_risk1_group_plot,file=paste0("results_addhaz/calib_risk1_group_plot_","scenario_", scenario,".png"),width = 20, height = 10, units = "cm")
+
+#---
+#save plots in rda
+
+save(descr_KM_plot,file=paste0("results_addhaz/descr_KM_plot_","scenario_",scenario,".rda"))
+save(main_plots_together,file=paste0("results_addhaz\\main_plots_together_","scenario_", scenario,".rda"))
+save(appendix_plots_together,file=paste0("results_addhaz\\appendix_plots_together_","scenario_", scenario,".rda"))
+
+save(cindex_plot_0,file=paste0("results_addhaz\\cindex_plot0_","scenario_", scenario,".rda"))
+save(cindex_plot_1,file=paste0("results_addhaz\\cindex_plot1_","scenario_", scenario,".rda"))
+save(auct_plot_0,file=paste0("results_addhaz\\auct_plot0_","scenario_", scenario,".rda"))
+save(auct_plot_1,file=paste0("results_addhaz\\auct_plot1_","scenario_", scenario,".rda"))
+save(brier_plot_0,file=paste0("results_addhaz\\brier_plot0_","scenario_", scenario,".rda"))
+save(brier_plot_1,file=paste0("results_addhaz\\brier_plot1_","scenario_", scenario,".rda"))
+save(ipa_plot_0,file=paste0("results_addhaz\\ipa_plot0_","scenario_", scenario,".rda"))
+save(ipa_plot_1,file=paste0("results_addhaz\\ipa_plot1_","scenario_", scenario,".rda"))
+save(file=paste0("results_addhaz/calib_risk_plot0_","scenario_", scenario,".rda"),plot=calib_risk_plot0)
+save(file=paste0("results_addhaz/calib_risk_plot1_","scenario_", scenario,".rda"),plot=calib_risk_plot1)
+save(file=paste0("results_addhaz/calib_risk0_group_plot_","scenario_", scenario,".rda"),plot=calib_risk0_group_plot)
+save(file=paste0("results_addhaz/calib_risk1_group_plot_","scenario_", scenario,".rda"),plot=calib_risk1_group_plot)
+
+#--------------
+# arrange descriptive KM plots from different scenarios together in one plot
+
+descr_KM_plot1 <- descr_KM_plot + ylim(0,0.8) #after running scenario 1 (note same as scenario 3)
+descr_KM_plot2 <- descr_KM_plot + ylim(0,0.8) #after running scenario 2
+KMplots_together <- ggarrange(descr_KM_plot1, descr_KM_plot2,
+                             nrow=1,
+                             common.legend=TRUE,legend="bottom")
+KMplots_together
+ggsave(KMplots_together,file=paste0("results_addhaz\\add_haz_KM_plots_together.png"),width = 20, units = "cm")
+
+
+#------------------------------
+#render latex code of main tables
+
+xtable(table_OErisk_wide)
+xtable(table_cindex_wide)
+xtable(table_auct_wide)
+xtable(table_ipa_wide)
 
 #------------------------
 #------------------------
@@ -164,10 +164,10 @@ save(table_ipa_wide,file=paste0("results_addhaz/table_ipa_wide_","scenario_",sce
 #------------------------
 
 #number of simulations
-Nsim <- 10
+Nsim <- 1000
 
 #sample size 
-n=1000
+n=3000
 
 # specify the scenario (+ plotting limits)
 # scenario 1: base scenario same dgm for development and validation data (gamma.0=-1, gamma.L = 0.5, alpha.0 = -2, alpha.L = 0.5, alpha. A= -0.5, alpha.U= 0.5)
@@ -179,7 +179,7 @@ scenario <- 2; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <-
 scenario <- 3; cindex_ylim_low <- .52; cindex_ylim_high <- .675; auc_ylim_low <- 0.50; auc_ylim_high <- 0.70; calib_lim_low <- 0.1; calib_lim_high <- 0.9; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
 
 #Perform analyses for Nsim simulated data sets of n individuals
-source("simulation_cox.R")
+source("simulation_cox_v5.R")
 
 #create results tables
 source("results_tables.R")
@@ -208,7 +208,7 @@ ggsave(descr_KM_plot,file=paste0("results_cox\\cox_marginal_risk_distribution_",
 # Supplementary Figure A5 (scenario 1), Figure A7 (scenario 2), Figure A9 (scenario 3)
 ggsave(main_plots_together,file=paste0("results_cox\\cox_main_plots_together_","scenario_", scenario,".png"),width = 13, height = 20, units = "cm")
 # Supplementary Figure A6 (scenario 1), Figure A8 (scenario 2), Figure A10 (scenario 3)
-ggsave(appendix_plots_together,file=paste0("results_cox\\cox_appendix_plots_together_","scenario_", scenario,".png"),width = 13, height = 20, units = "cm")
+ggsave(appendix_plots_together,file=paste0("results_cox\\cox_appendix_plots_together_","scenario_", scenario,".png"),width = 13, height = 40/3, units = "cm")
 
 #---
 #save main tables
