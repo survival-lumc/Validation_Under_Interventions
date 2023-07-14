@@ -2,23 +2,23 @@
 ###########################################################################################
 # Creates the following plots summarizing simulation results:
 #
-# calib_risk0_group_plot and calib_risk1_group_plot: observed outcome proportions against mean estimated risks by time 5 within tenths of the estimated risks 
+# calib_risk0_group_plot and calib_risk1_group_plot: 'observed' counterfactual outcome proportions against mean estimated risks by time 5 within tenths of the estimated risks 
 # cindex_plot_0 and cindex_plot_1: boxplots of cindex truncated at time 5 
 # auct_plot_0 and auct_plot_1: boxplots of auct at time 5
 # ipa_plot_0 and ipa_plot_1: boxplots of scaled brier at time 5
 # main_plots_together:  combines the above 4x2 plots in one figure
 #                       presented in the manuscript in Figures 3/4/5 (add hazard model scenario 1/2/3)
-#                       presented in supplementary Figures A5/A7/A9 (Cox model scenario 1/2/3)
+#                       presented in eFigures 6/8/10 (Cox model scenario 1/2/3)
 #
 # calib_risk_plot0 and calib_risk_plot1: plots of estimated versus observed overall risks for time point 1,2,3,4,5
 # brier_plot_0 and brier_plot_1: boxplots of (unscaled) brier at time 5
 # appendix_plots_together:  combines the above 2x2 plots in one figure
-#                           presented in supplementary Figures A1/A2/A3 (add hazard model scenario 1/2/3)
-#                           presented in supplementary Figures A6/A8/A10 (Cox model scenario 1/2/3)
+#                           presented in eFigures 3/4/5 (add hazard model scenario 1/2/3)
+#                           presented in eFigures 7/9/11 (Cox model scenario 1/2/3)
 #
 # descr_KM_plot: plot of the marginal risk distribution in development, validation, counterfactual never treated and always treated data
-#                presented in the manuscript in Figure 2 (add hazards model)
-#                presented in supplementary Figure A4 (Cox model)          
+#                presented in eFigure 1 (add hazards model)
+#                presented in eFigure 2 (Cox model)          
 #
 # The plots are saved in the master file
 # 
@@ -32,7 +32,7 @@
 #------------------------------
 
 # select estimators, colors and shapes of outliers to present in plots for cindex, auct, brier, ipa
-selection_estimators <- c("true counterfactual","subset","IPCW")
+selection_estimators <- c("true","subset","IPCW")
 selection_cols <- c("cf"="#000000","restr"="#D55E00","IPCW"="#009E73")
 
 #---
@@ -41,8 +41,8 @@ selection_cols <- c("cf"="#000000","restr"="#D55E00","IPCW"="#009E73")
 #restructuring of simulation results
 disc_cindex0 <- disc_cindex[,c(1,9,2:4)]
 disc_cindex1 <- disc_cindex[,c(5,10,6:8)]
-colnames(disc_cindex0) <- c("true counterfactual", "subset", "Harrell's", "Uno's C", "IPCW")
-colnames(disc_cindex1) <- c("true counterfactual", "subset", "Harrell's", "Uno's C", "IPCW")
+colnames(disc_cindex0) <- c("true", "subset", "Harrell's", "Uno's C", "IPCW")
+colnames(disc_cindex1) <- c("true", "subset", "Harrell's", "Uno's C", "IPCW")
 
 sim=1:Nsim
 dat_cindex0 <- cbind(disc_cindex0,sim)
@@ -77,8 +77,8 @@ cindex_plot_1<-ggplot(disc_cindex_melt1 %>% subset(., subset = estimator %in% se
 #restructuring of simulation results
 disc_auct0 <- disc_auct[,c(1,9,2:4)]
 disc_auct1 <- disc_auct[,c(5,10,6:8)]
-colnames(disc_auct0) <- c("true counterfactual", "subset", "unweighted", "KM weighted", "IPCW")
-colnames(disc_auct1) <- c("true counterfactual", "subset", "unweighted", "KM weighted", "IPCW")
+colnames(disc_auct0) <- c("true", "subset", "unweighted", "KM weighted", "IPCW")
+colnames(disc_auct1) <- c("true", "subset", "unweighted", "KM weighted", "IPCW")
 
 sim=1:Nsim
 dat_auct0 <- cbind(disc_auct0,sim)
@@ -112,8 +112,8 @@ auct_plot_1<-ggplot(disc_auct_melt1 %>% subset(., subset = estimator %in% select
 
 brier0 <- brier_raw[,c(1,7,2,3)]
 brier1 <- brier_raw[,c(4,8,5,6)]
-colnames(brier0) <- c("true counterfactual", "subset", "KM weighted", "IPCW")
-colnames(brier1) <- c("true counterfactual", "subset", "KM weighted", "IPCW")
+colnames(brier0) <- c("true", "subset", "KM weighted", "IPCW")
+colnames(brier1) <- c("true", "subset", "KM weighted", "IPCW")
 sim=1:Nsim
 dat_brier0 <- cbind(brier0,sim)
 dat_brier1 <- cbind(brier1,sim)
@@ -146,8 +146,8 @@ brier_plot_1<-ggplot(brier_melt1 %>% subset(., subset = estimator %in% selection
 
 ipa0 <- brier_ipa[,c(1,7,2,3)]
 ipa1 <- brier_ipa[,c(4,8,5,6)]
-colnames(ipa0) <- c("true counterfactual", "subset", "KM weighted", "IPCW")
-colnames(ipa1) <- c("true counterfactual", "subset", "KM weighted", "IPCW" )
+colnames(ipa0) <- c("true", "subset", "KM weighted", "IPCW")
+colnames(ipa1) <- c("true", "subset", "KM weighted", "IPCW" )
 
 sim=1:Nsim
 dat_ipa0 <- cbind(ipa0,sim)
@@ -276,9 +276,9 @@ calib_risk_plot0<-ggplot(calib_risk0_plot_data,aes(x=time,y=est_risk0_true))+the
         #  
   scale_x_continuous(breaks=seq(1,5,1),limits=c(0.8,5.3))+
   scale_y_continuous(breaks=seq(0,calib_risk_lim_high,0.1),limits=c(0,calib_risk_lim_high))+
-  scale_colour_manual(NULL,values=cols,labels=c(est="predicted", obs="estimated IPCW", true="true counterfactual",est_subset="predicted subset", obs_subset="estimated subset" ),
+  scale_colour_manual(NULL,values=cols,labels=c(est="predicted", obs="counterfactual", true="true",est_subset="predicted subset", obs_subset="observed subset" ),
                       breaks=c("est","obs", "true","est_subset","obs_subset"))+
-  scale_shape_manual(NULL,values=shapes,labels=c(est="predicted", obs="estimated IPCW", true="true counterfactual",est_subset="predicted subset", obs_subset="estimated subset" ),
+  scale_shape_manual(NULL,values=shapes,labels=c(est="predicted", obs="counterfactual", true="true",est_subset="predicted subset", obs_subset="observed subset" ),
                      breaks=c("est","obs", "true","est_subset","obs_subset"))+
   ggtitle("never treated")+
   theme(plot.title = element_text(hjust = 0.5))
@@ -298,9 +298,9 @@ calib_risk_plot1<-ggplot(calib_risk1_plot_data,aes(x=time,y=est_risk1_true))+the
   #  
   scale_x_continuous(breaks=seq(1,5,1),limits=c(0.8,5.2))+
   scale_y_continuous(breaks=seq(0,calib_risk_lim_high,0.1),limits=c(0,calib_risk_lim_high))+
-  scale_colour_manual(NULL,values=cols,labels=c(est="predicted", obs="estimated IPCW", true="true counterfactual",est_subset="predicted subset", obs_subset="estimated subset" ),
+  scale_colour_manual(NULL,values=cols,labels=c(est="predicted", obs="counterfactual", true="true",est_subset="predicted subset", obs_subset="observed subset" ),
                       breaks=c("est","obs", "true","est_subset","obs_subset"))+
-  scale_shape_manual(NULL,values=shapes,labels=c(est="predicted", obs="estimated IPCW", true="true counterfactual",est_subset="predicted subset", obs_subset="estimated subset" ),
+  scale_shape_manual(NULL,values=shapes,labels=c(est="predicted", obs="counterfactual", true="true",est_subset="predicted subset", obs_subset="observed subset" ),
                      breaks=c("est","obs", "true","est_subset","obs_subset"))+
   ggtitle("always treated")+
   theme(plot.title = element_text(hjust = 0.5))
@@ -366,11 +366,11 @@ calib_risk0_group_plot<-ggplot(calib_risk0_group_plot_data,aes(x=est_risk0_group
   scale_x_continuous(breaks=seq(calib_lim_low,calib_lim_high,0.1),limits=c(calib_lim_low,calib_lim_high))+
   scale_y_continuous(breaks=seq(calib_lim_low,calib_lim_high,0.1),limits=c(calib_lim_low,calib_lim_high))+
   #
-  scale_colour_manual(NULL,values=cols,labels=c(true="true counterfactual", obs_subset="estimated subset", obs="estimated IPCW"),
+  scale_colour_manual(NULL,values=cols,labels=c(true="true", obs_subset="subset", obs="counterfactual"),
                       breaks=c("true","obs_subset","obs"))+
-  scale_linetype_manual(NULL,values=cols,labels=c(true="true counterfactual", obs_subset="estimated subset", obs="estimated IPCW"),
+  scale_linetype_manual(NULL,values=cols,labels=c(true="true", obs_subset="subset", obs="counterfactual"),
                       breaks=c("true","obs_subset","obs"))+
-  scale_shape_manual(NULL,values=shapes,labels=c(true="true counterfactual", obs="estimated IPCW", obs_subset="estimated subset" ),
+  scale_shape_manual(NULL,values=shapes,labels=c(true="true", obs="counterfactual", obs_subset="subset" ),
                       breaks=c("true","obs_subset","obs"))+
   ggtitle("never treated")+
   theme(plot.title = element_text(hjust = 0.5 ))
@@ -390,11 +390,11 @@ calib_risk1_group_plot<-ggplot(calib_risk1_group_plot_data,aes(x=est_risk1_group
   scale_x_continuous(breaks=seq(calib_lim_low,calib_lim_high,0.1),limits=c(calib_lim_low,calib_lim_high))+
   scale_y_continuous(breaks=seq(calib_lim_low,calib_lim_high,0.1),limits=c(calib_lim_low,calib_lim_high))+
   #
-  scale_colour_manual(NULL,values=cols,labels=c(true="true counterfactual", obs_subset="estimated subset", obs="estimated IPCW"),
+  scale_colour_manual(NULL,values=cols,labels=c(true="true", obs_subset="subset", obs="counterfactual"),
                       breaks=c("true","obs_subset","obs"))+
-  scale_linetype_manual(NULL,values=cols,labels=c(true="true counterfactual", obs_subset="estimated subset", obs="estimated IPCW"),
+  scale_linetype_manual(NULL,values=cols,labels=c(true="true", obs_subset="subset", obs="counterfactual"),
                         breaks=c("true","obs_subset", "obs"))+
-  scale_shape_manual(NULL,values=shapes,labels=c(true="true counterfactual", obs="estimated IPCW", obs_subset="estimated subset" ),
+  scale_shape_manual(NULL,values=shapes,labels=c(true="true", obs="counterfactual", obs_subset="subset" ),
                      breaks=c("true","obs_subset", "obs"))+
   ggtitle("always treated")+
   theme(plot.title = element_text(hjust = 0.5))#to center the title
@@ -404,7 +404,6 @@ calib_risk1_group_plot<-ggplot(calib_risk1_group_plot_data,aes(x=est_risk1_group
 # arrange results together
 #------------------------------
 #------------------------------
-
 
 main_plots_together <- ggarrange(
   calib_risk0_group_plot + theme(text = element_text(size = 8), legend.text = element_text(size = 10))
@@ -435,7 +434,6 @@ appendix_plots_together <- ggarrange(
 
 appendix_plots_together <- annotate_figure(appendix_plots_together, top = text_grob(paste0("Appendix scenario ", scenario, model), size = 12))
 
-
 #-----------------------------
 # descriptive plots
 #-----------------------------
@@ -453,10 +451,9 @@ descr_KM_plot <- ggplot(data = descr_KM_curves_average, aes(x=time, y=average_ri
   labs(x = "time",
        y = "cumulative risk of event",
        title = paste0("Scenario ", ifelse((scenario==1| scenario==3),"1 + 3", "2")))+
-  scale_colour_manual(name=NULL, values=cols,     labels=c(cf_treated="counterfactual data treated", cf_untreated="counterfactual data untreated", development = "development data", validation = "validation data"))+
-  scale_linetype_manual(name=NULL, values=ltypes, labels=c(cf_treated="counterfactual data treated", cf_untreated="counterfactual data untreated", development = "development data", validation = "validation data"))+
+  scale_colour_manual(name=NULL, values=cols,     labels=c(cf_treated="perfect validation data treated", cf_untreated="perfect validation data untreated", development = "development data", validation = "observational validation data"))+
+  scale_linetype_manual(name=NULL, values=ltypes, labels=c(cf_treated="perfect validation data treated", cf_untreated="perfect validation data untreated", development = "development data", validation = "observational validation data"))+
   ylim(0,0.8)
-
 
 # L values (currently not used)
 

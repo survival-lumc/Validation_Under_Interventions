@@ -2,16 +2,15 @@
 ###########################################################################################
 # Creates the following tables summarizing simulation results (mean, bias and Monte Carlo standard error)
 #
-# table_OErisk_wide: for calibration, contains ratios of observed vs expected risks for time point 5
+# table_OErisk_wide: for calibration, contains ratios of observed vs expected risks by time point 5
 # table_cindex_wide: for cindex by time point 5 
 # table_auct_wide: for AUCt at time point 5
 # table_ipa_wide: for scaled brier/ipa by time point 5
 # table_combined_wide:  combines the above four tables into one table 
-#                       presented in the manuscript in Tables 3/4/5 (scenario 1/2/3 add hazard model) 
-#                       presented in the manuscript in Supplementary Tables A2/A3/A4 (scenario 1/2/3 Cox model) 
+#                       presented in the main manuscript in Tables 1/2/3 (scenario 1/2/3 add hazard model) 
+#                       presented in the supplementary file in eTables 4/5/6 (scenario 1/2/3 Cox model) 
 #
 # The tables are saved in the master file
-
 
 ###########################################################################################
 ###########################################################################################
@@ -41,30 +40,30 @@ bias.mc=function(x){sqrt(sum((x-mean(x))^2)/(Nsim*(Nsim-1)))}
 #Calibration O/E ratio based on risk up to time 5
 #Reminder of content dim 3 'calib_risk0'  and 'calib_risk1'
 #,,1 estimated
-#,,2 observed / IPCW
+#,,2 observed counterfactual / IPCW
 #,,3 true / true cf
 #,,4 estimated subset
 #,,5 observed subset
 
 calib_risk0_ratio <- cbind(calib_risk0[,5,3]/calib_risk0[,5,1], calib_risk0[,5,5]/calib_risk0[,5,4], calib_risk0[,5,2]/calib_risk0[,5,1])
-colnames(calib_risk0_ratio) <- c("true cf", "subset", "IPCW")
+colnames(calib_risk0_ratio) <- c("true", "subset", "counterfactual")
 
 calib_risk0_ratio_summary<-sp3(colMeans(calib_risk0_ratio))
 calib_risk0_ratio_bias<-sapply(1:3,FUN=function(x){bias(calib_risk0_ratio[,x],calib_risk0_ratio[,1])})
 calib_risk0_ratio_biasmc<-sapply(1:3,FUN=function(x){bias.mc(calib_risk0_ratio[,x])})
 
 calib_risk1_ratio <- cbind(calib_risk1[,5,3]/calib_risk1[,5,1], calib_risk1[,5,5]/calib_risk1[,5,4], calib_risk1[,5,2]/calib_risk1[,5,1])
-colnames(calib_risk1_ratio) <- c("true cf", "subset", "IPCW")
+colnames(calib_risk1_ratio) <- c("true", "subset", "counterfactual")
 
 calib_risk1_ratio_summary<-sp3(colMeans(calib_risk1_ratio))
 calib_risk1_ratio_bias<-sapply(1:3,FUN=function(x){bias(calib_risk1_ratio[,x],calib_risk1_ratio[,1])})
 calib_risk1_ratio_biasmc<-sapply(1:3,FUN=function(x){bias.mc(calib_risk1_ratio[,x])})
 
 table_OErisk0_wide <- rbind(calib_risk0_ratio_summary, paste0(sp3(calib_risk0_ratio_bias)," (",sp3(calib_risk0_ratio_biasmc),")"))
-colnames(table_OErisk0_wide) <- c("true cf", "subset", "IPCW")
+colnames(table_OErisk0_wide) <- c("true", "subset", "counterfactual")
 
 table_OErisk1_wide <- rbind(calib_risk1_ratio_summary, paste0(sp3(calib_risk1_ratio_bias)," (",sp3(calib_risk1_ratio_biasmc),")"))
-colnames(table_OErisk1_wide) <- c("true cf", "subset", "IPCW")
+colnames(table_OErisk1_wide) <- c("true", "subset", "counterfactual")
 
 table_OErisk0_wide[2,1] <- ""
 table_OErisk1_wide[2,1] <- ""
@@ -85,19 +84,19 @@ rownames(table_OErisk_wide) <- c("mean", "bias (SE)")
 #restructuring of simulation results
 disc_cindex0 <- disc_cindex[,c(1,9,2:4)]
 disc_cindex1 <- disc_cindex[,c(5,10,6:8)]
-colnames(disc_cindex0) <- c("true cf", "subset", "unweighted", "KM weighted", "IPCW") #note: Harrell's = unweighted, Uno's C = KM weighted
-colnames(disc_cindex1) <- c("true cf", "subset", "unweighted", "KM weighted", "IPCW")
+colnames(disc_cindex0) <- c("true", "subset", "unweighted", "KM weighted", "counterfactual") #note: Harrell's = unweighted, Uno's C = KM weighted
+colnames(disc_cindex1) <- c("true", "subset", "unweighted", "KM weighted", "counterfactual")
 
 #------------------------------
 #Select which estimators you want to see the results of
 
-selection_estimators <- c("true cf","subset","IPCW")
+selection_estimators <- c("true","subset","counterfactual")
 
 sim=1:Nsim
 dat_cindex0 <- cbind(disc_cindex0,sim)
 dat_cindex1 <- cbind(disc_cindex1,sim)
 
-disc_cindex_melt0<-melt(disc_cindex0,id=c("sim"), value.name = "cindex", measure.vars = c("ignore treatment", "subset", "Harrell's", "Uno's C", "IPCW"), varnames = c("sim","estimator"))
+disc_cindex_melt0<-melt(disc_cindex0,id=c("sim"), value.name = "cindex", measure.vars = c("ignore treatment", "subset", "Harrell's", "Uno's C", "counterfactual"), varnames = c("sim","estimator"))
 truth_cindex0 <- rep(disc_cindex0[,1], length(colnames(disc_cindex0)))
 disc_cindex_melt0<-cbind(disc_cindex_melt0,truth_cindex0) #append the true values
 
@@ -168,8 +167,8 @@ rownames(table_cindex_wide) <- c("mean", "bias (SE)")
 #restructuring of simulation results
 disc_auct0 <- disc_auct[,c(1,9,2:4)]
 disc_auct1 <- disc_auct[,c(5,10,6:8)]
-colnames(disc_auct0) <- c("true cf", "subset", "unweighted", "KM weighted", "IPCW")
-colnames(disc_auct1) <- c("true cf", "subset", "unweighted", "KM weighted", "IPCW")
+colnames(disc_auct0) <- c("true", "subset", "unweighted", "KM weighted", "counterfactual")
+colnames(disc_auct1) <- c("true", "subset", "unweighted", "KM weighted", "counterfactual")
 
 sim=1:Nsim
 dat_auct0 <- cbind(disc_auct0,sim)
@@ -249,8 +248,8 @@ rownames(table_auct_wide) <- c("mean", "bias (SE)")
 
 brier0 <- brier_raw[,c(1,7,2,3)]
 brier1 <- brier_raw[,c(4,8,5,6)]
-colnames(brier0) <- c("true cf", "subset", "KM weighted", "IPCW")
-colnames(brier1) <- c("true cf", "subset", "KM weighted", "IPCW")
+colnames(brier0) <- c("true", "subset", "KM weighted", "counterfactual")
+colnames(brier1) <- c("true", "subset", "KM weighted", "counterfactual")
 sim=1:Nsim
 dat_brier0 <- cbind(brier0,sim)
 brier_melt0<-melt(brier0,id=c("sim"), value.name = "brier", varnames = c("sim","estimator"))
@@ -322,8 +321,8 @@ rownames(table_brier_wide) <- c("mean", "bias (SE)")
 
 ipa0 <- brier_ipa[,c(1,7,2,3)]
 ipa1 <- brier_ipa[,c(4,8,5,6)]
-colnames(ipa0) <- c("true cf", "subset", "KM weighted", "IPCW")
-colnames(ipa1) <- c("true cf", "subset", "KM weighted", "IPCW")
+colnames(ipa0) <- c("true", "subset", "KM weighted", "counterfactual")
+colnames(ipa1) <- c("true", "subset", "KM weighted", "counterfactual")
 sim=1:Nsim
 dat_ipa0 <- cbind(ipa0,sim)
 ipa_melt0<-melt(ipa0,id=c("sim"), value.name = "ipa", varnames = c("sim","estimator"))
