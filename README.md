@@ -1,7 +1,7 @@
-# Prediction under hypothetical interventions: evaluation of performance using longitudinal observational data
+# Prediction under hypothetical interventions: evaluation of counterfactual performance using longitudinal observational data
 Code accompanying the manuscript
 
-["Prediction under hypothetical interventions: evaluation of performance using longitudinal observational data"](https://doi.org/10.48550/arXiv.2304.10005)
+["Prediction under hypothetical interventions: evaluation of counterfactual performance using longitudinal observational data"](https://doi.org/10.48550/arXiv.2304.10005)
 
 Ruth Keogh (1) and Nan van Geloven (2)
 
