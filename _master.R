@@ -177,10 +177,10 @@ scenario <- 3; cindex_ylim_low <- .52; cindex_ylim_high <- .675; auc_ylim_low <-
 source("simulation_cox.R")
 
 #create results tables
-source("results_tables_newnames.R")
+source("results_tables.R")
 
 #create results plots
-source("results_plots_newnames.R")
+source("results_plots.R")
 
 #---
 #print main results
