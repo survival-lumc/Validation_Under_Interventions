@@ -50,6 +50,34 @@ risk1_exp=sapply(t.hor,FUN=function(x){1-exp(-(
 #fit weights model for people untreated at time 0
 wt.mod=glm(A~L,family = "binomial",data=dat.long.val[dat.long.val$Alag1==0,])
 
+#in scenario 5a, we use a model for the weights with only intercept (violation of exchangeability)
+if(scenario=="5a"){
+  wt.mod=glm(A~1,family = "binomial",data=dat.long.val[dat.long.val$Alag1==0,])
+}
+
+#in scenario 5b we use a misspecified model for the weights with only L0 (violation of exchangeability)
+if(scenario=="5b"){
+  wt.mod=glm(A~L.baseline,family = "binomial",data=dat.long.val[dat.long.val$Alag1==0,])
+}
+
+#in scenario 6a we use a misspecified model for the weights with log(L)
+if(scenario=="6a"){
+    dat.long.val <- mutate(dat.long.val, logL = log(L+20))
+    wt.mod=glm(A~logL,family = "binomial",data=dat.long.val[dat.long.val$Alag1==0,])
+}
+
+#in scenario 6b we use a misspecified model for the weights with L^2 in stead of L
+if(scenario=="6b"){
+  dat.long.val <- mutate(dat.long.val, L2 = L^2)
+  wt.mod=glm(A~L2,family = binomial,data=dat.long.val[dat.long.val$Alag1==0,])
+}
+
+#in scenario 6d we use a misspecified model for the weights with cauchit in stead of logit link
+if(scenario=="6d"){
+  wt.mod=glm(A~L,family = binomial(link = "cauchit"),data=dat.long.val[dat.long.val$Alag1==0,])
+}
+
+
 #predicted probability that A[t]=0 conditional on A[t-1]=0 and conditional on L[t]
 pred.wt0=predict(wt.mod,type = "response",newdata = dat.long.val)
 dat.long.val$wt0=1-pred.wt0
@@ -83,6 +111,31 @@ risk0_obs=1-step.risk0.obs(1:5)
 
 #fit weights model for people treated at time 0
 wt.mod.baseline=glm(A~L,family = "binomial",data=dat.long.val[dat.long.val$visit==1,])
+
+#in scenario 5a, we use amodel for the weights with only intercept (not using L)
+if(scenario=="5a"){
+  wt.mod.baseline=glm(A~1,family = "binomial",data=dat.long.val[dat.long.val$visit==1,])
+}
+
+#in scenario 5b, we use amodel for the weights with only intercept L0
+if(scenario=="5b"){
+  wt.mod.baseline=glm(A~L.baseline,family = "binomial",data=dat.long.val[dat.long.val$visit==1,])
+}
+
+#in scenario 6a we use a misspecified model for the weights with log(L)
+if(scenario=="6a"){
+  wt.mod.baseline=glm(A~logL,family = "binomial",data=dat.long.val[dat.long.val$visit==1,])
+}  
+
+#in scenario 6b we use a misspecified model for the weights including L^2 instead of L
+if(scenario=="6b"){
+  wt.mod.baseline=glm(A~L2,family = binomial(link="cauchit"),data=dat.long.val[dat.long.val$visit==1,])
+}  
+
+#in scenario 6d we use a misspecified model for the weights with different link function
+if(scenario=="6d"){
+  wt.mod.baseline=glm(A~L,family = binomial(link="cauchit"),data=dat.long.val[dat.long.val$visit==1,])
+}  
 
 
 #predicted probability that A[0]=1 conditional on A[-1]=0 (which is true for everyone) and conditional on L[0]

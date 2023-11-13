@@ -17,8 +17,8 @@ seeds<-sample(1:1000000,Nsim)
 #storage for simulation results
 
 #descriptives
-descriptives_scenario <- matrix(nrow=Nsim, ncol=15)
-colnames(descriptives_scenario) <- rep("NA",15)
+descriptives_scenario <- matrix(nrow=Nsim, ncol=20)
+colnames(descriptives_scenario) <- rep("NA",20)
 descr_KM_curves_long <- matrix(nrow = 0, ncol = 4)
 colnames(descr_KM_curves_long) = c("sim","time","type","risk")
 
@@ -51,7 +51,7 @@ for(i in 1:Nsim){
   #---
   #Simulate development and validation data
 
-  if(scenario==1){
+  if(scenario==1|scenario=="5a"|scenario=="5b"|scenario=="6a"|scenario=="6b"|scenario=="6d"){
     source("dat_sim_addhaz_scenario1.R")
     dat.dev<-dat
     dat.long.dev<-dat.long
@@ -80,10 +80,42 @@ for(i in 1:Nsim){
      dat.val<-dat
      dat.long.val<-dat.long
   }
+
+     
+  if(scenario=="4a"){
+     source("dat_sim_addhaz_scenario1.R")
+     dat.dev<-dat
+     dat.long.dev<-dat.long
+       
+     source("dat_sim_addhaz_scenario4a.R")
+     dat.val<-dat
+     dat.long.val<-dat.long
+  }
+
+  if(scenario=="4b"){
+    source("dat_sim_addhaz_scenario1.R")
+    dat.dev<-dat
+    dat.long.dev<-dat.long
+    
+    source("dat_sim_addhaz_scenario4b.R")
+    dat.val<-dat
+    dat.long.val<-dat.long
+  }
+  
+  
+  if(scenario=="6c"){
+    source("dat_sim_addhaz_scenario1.R")
+    dat.dev<-dat
+    dat.long.dev<-dat.long
+    
+    source("dat_sim_addhaz_scenario6c.R")
+    dat.val<-dat
+    dat.long.val<-dat.long
+    
+  }
   
   #---
   #Simulate counterfactual validation data
-  
   source("dat_sim_addhaz_counterfactual_scenario1.R")
   
   #---
@@ -93,7 +125,6 @@ for(i in 1:Nsim){
   #---
   #Preparation for model validation: obtains quantities used for discrimination, calibration, Brier score (uses dat.val and dat.long.val)
   source("analysis_addhaz_model_validation.R")
-  #source("analysis_addhaz_model_validation_weights_misspec.R")
   
   #---
   #Estimation of discrimination metrics

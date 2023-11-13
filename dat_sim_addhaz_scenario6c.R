@@ -4,7 +4,7 @@
 #U is an individual frailty. 
 #People who do not have the event are censored at time 5.
 #
-#SCENARIO 1: basis scenario
+#SCENARIO 6c: basis scenario + quadratic effect in treatment assignment model
 #------------------------------
 #------------------------------
 
@@ -31,14 +31,24 @@ sd.L=4
 #Mean of L: U+mu.L
 mu.L<-10
 
-#model for A|L
-gamma.0=-2
-gamma.L=0.1
+
+# #model for A|L
+# gamma.0=-3
+# gamma.L=0.1
+# gamma.L2=0.05
+# led to positivy issues, in val.0 all L.0 <5, while in full population up to 25
+
+# #model for A|L
+ gamma.0=-2
+ gamma.L=0.01
+ gamma.L2=0.01
+
 
 #model for hazard
 alpha.0=0.2
 alpha.A=-0.04
 alpha.L=0.01
+
 alpha.U=0.01
 tfac=0.2
 
@@ -54,10 +64,12 @@ L=matrix(nrow=n,ncol=n.visit)
 
 U=rnorm(n,0,sd.U)
 L[,1]=rnorm(n,U+mu.L,sd.L)
-A[,1]=rbinom(n,1,expit(gamma.0+gamma.L*L[,1]))
+#introduce squared effect of L
+A[,1]=rbinom(n,1,expit(gamma.0+gamma.L*L[,1]+gamma.L2*L[,1]*L[,1]))
 for(k in 2:n.visit){
   L[,k]=rnorm(n,0.8*L[,k-1]-A[,k-1]+0.1*(k-1)+U,sd.L)
-  A[,k]=ifelse(A[,k-1]==1,1,rbinom(n,1,expit(gamma.0+gamma.L*L[,k])))
+  #introduce squared effect of L
+  A[,k]=ifelse(A[,k-1]==1,1,rbinom(n,1,expit(gamma.0+gamma.L*L[,k]+gamma.L2*L[,k]*L[,k])))
 }
 
 #----

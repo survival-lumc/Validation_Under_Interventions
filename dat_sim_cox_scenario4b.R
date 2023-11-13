@@ -1,10 +1,10 @@
 #------------------------------
 #------------------------------
-#simulates longitudinal data on treatment A and covariates L at 5 time points, and then generates event times according to an additive hazards model. 
+#simulates longitudinal data on treatment A and covariates L at 5 time points, and then generates event times according to a Cox model. 
 #U is an individual frailty. 
 #People who do not have the event are censored at time 5.
 #
-#SCENARIO 1: basis scenario
+#SCENARIO 4b: mild violation of positivity assumption
 #------------------------------
 #------------------------------
 
@@ -22,25 +22,33 @@ expit=function(x){exp(x)/(1+exp(x))}
 #parameter values
 #------------------
   
-#SD(U)
-sd.U<-2
-
-#SD of L|U
-sd.L=4
-
-#Mean of L: U+mu.L
-mu.L<-10
-
 #model for A|L
-gamma.0=-2
-gamma.L=0.1
+gamma.0=-1
+gamma.L=0.5
+
+#test scenario with strong impact of L on treatment, leading to potential positivity violation (eg only 1/62 patients with L0>2 had T.cens.0>1)
+#gamma.0=-1
+#gamma.L=1
+
+#test scenario with higher treatment chances, leading to potential positivity violation at later time points
+gamma.0=0
+gamma.L=0.5
 
 #model for hazard
-alpha.0=0.2
-alpha.A=-0.04
-alpha.L=0.01
-alpha.U=0.01
-tfac=0.2
+alpha.0=-2
+alpha.A=-0.5
+alpha.L=0.5
+alpha.U=0.5
+
+#test scenario with no predictive value of the model (AUC and c-index around 0.5)
+#alpha.A=0
+#alpha.L=0
+#alpha.U=0
+
+#test scenario with high predictive value of the model (c-index around 0.7)
+#alpha.A=-0.1
+#alpha.L=1.5
+#alpha.U=0.5
 
 #------------------
 #simulate data
@@ -52,11 +60,11 @@ tfac=0.2
 A=matrix(nrow=n,ncol=n.visit)
 L=matrix(nrow=n,ncol=n.visit)
 
-U=rnorm(n,0,sd.U)
-L[,1]=rnorm(n,U+mu.L,sd.L)
+U=rnorm(n,0,0.1)
+L[,1]=rnorm(n,U,1)
 A[,1]=rbinom(n,1,expit(gamma.0+gamma.L*L[,1]))
 for(k in 2:n.visit){
-  L[,k]=rnorm(n,0.8*L[,k-1]-A[,k-1]+0.1*(k-1)+U,sd.L)
+  L[,k]=rnorm(n,0.8*L[,k-1]-A[,k-1]+0.1*(k-1)+U,1)
   A[,k]=ifelse(A[,k-1]==1,1,rbinom(n,1,expit(gamma.0+gamma.L*L[,k])))
 }
 
@@ -65,33 +73,15 @@ for(k in 2:n.visit){
 
 T.obs=rep(NA,n)
 
-neghaz=0
 for(k in 1:n.visit){
   u.t=runif(n,0,1)
-  haz=alpha.0+alpha.A*A[,k]+alpha.L*(1-(k-1)*tfac)*L[,k]+alpha.U*U
+  haz=exp(alpha.0+alpha.A*A[,k]+alpha.L*L[,k]+alpha.U*U)
   new.t=-log(u.t)/haz
-  T.obs=ifelse(is.na(T.obs) & new.t<1 & haz>0,k-1+new.t,T.obs)#the haz>0 is just used to deal with tiny possibility (under this data generating mechanism) the hazard could go negative. 
-  neghaz=ifelse(sum(haz<0)>0,neghaz+sum(haz<0),0)
+  T.obs=ifelse(is.na(T.obs) & new.t<1,k-1+new.t,T.obs)
 }
 D.obs=ifelse(is.na(T.obs),0,1)
 T.obs=ifelse(is.na(T.obs),5,T.obs)
-neghaz
 
-#----
-#generate standard (uninformative) censoring times and adjust event times T.obs, and event indicator D.obs accordingly
-
-if(censoring==TRUE)
-{
-  u.c=runif(n,0,1)
-  haz.c=0.1 #without events about 40% censored before t=5
-  #haz=0.05 #without events about 22% censored before t=5
-  C =-log(u.c)/haz.c
-  #sum(C<5)/n
-
-  T.obs=ifelse(T.obs>C ,C, T.obs)
-  D.obs=ifelse(T.obs<C & T.obs < 5,1,0)
-}
-  
 #-----
 #Create data frame
 
@@ -101,7 +91,7 @@ dat=data.frame(id=1:n,T.obs,D.obs,A,L)
 
 #-----
 #set A to 0 in time periods after event/censoring
- 
+
 dat$A.1=ifelse(dat$T.obs<1,0,dat$A.1)
 dat$A.2=ifelse(dat$T.obs<2,0,dat$A.2)
 dat$A.3=ifelse(dat$T.obs<3,0,dat$A.3)
@@ -110,7 +100,7 @@ dat$A.4=ifelse(dat$T.obs<4,0,dat$A.4)
 #------------------
 #some summaries: may be useful if you wish to change the parameter values used above, to consider other scenarios.
 #------------------
- 
+
 #proportion always treated
 always.treat=A[,1]+A[,2]+A[,3]+A[,4]+A[,5]
 
@@ -144,7 +134,7 @@ dat.long$visit=ave(rep(1,dim(dat.long)[1]),dat.long$id,FUN=cumsum)
 dat.long=dat.long %>%
   group_by(id) %>%
   mutate(Alag1 = lag(A,n=1),Alag2 = lag(A,n=2),Alag3 = lag(A,n=3),Alag4 = lag(A,n=4)) %>%
-  mutate(Alag1=replace_na(Alag1,0),Alag2=replace_na(Alag2,0),Alag3=replace_na(Alag3,0),Alag4=replace_na(Alag4,0))
+  mutate(Alag1 = replace_na(Alag1,0),Alag2=replace_na(Alag2,0),Alag3=replace_na(Alag3,0),Alag4=replace_na(Alag4,0))
 
 #generate lagged L values
 dat.long=dat.long %>%

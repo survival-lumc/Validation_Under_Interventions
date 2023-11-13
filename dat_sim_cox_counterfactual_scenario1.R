@@ -1,6 +1,6 @@
 #------------------------------
 #------------------------------
-#Simulates counterfactual longitudinal data on covariates L and event times under 'always treated' and 'never treated, using a Cox model. 
+# Simulates counterfactual longitudinal data on covariates L and event times under 'always treated' and 'never treated, using a Cox model. 
 #------------------------------
 #------------------------------
 
@@ -27,11 +27,6 @@ alpha.0=-2
 alpha.A=-0.5
 alpha.L=0.5
 alpha.U=0.5
-
-#test scenario with high predictive value of the model (c-index around 0.7)
-#alpha.A=-0.1
-#alpha.L=1.5
-#alpha.U=0.5
 
 #---------------------
 #---------------------

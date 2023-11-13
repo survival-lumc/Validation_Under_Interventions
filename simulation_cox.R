@@ -17,8 +17,8 @@ seeds<-sample(1:1000000,Nsim)
 #storage for simulation results
 
 #descriptives
-descriptives_scenario <- matrix(nrow=Nsim, ncol=15)
-colnames(descriptives_scenario) <- rep("NA",15)
+descriptives_scenario <- matrix(nrow=Nsim, ncol=20)
+colnames(descriptives_scenario) <- rep("NA",20)
 descr_KM_curves_long <- matrix(nrow = 0, ncol = 4)
 colnames(descr_KM_curves_long) = c("sim","time","type","risk")
 
@@ -51,7 +51,7 @@ for(i in 1:Nsim){
   #---
   #Simulate development and validation data and counterfactual validation data
   
-  if(scenario==1){
+  if(scenario==1|scenario=="5a"|scenario=="5b"|scenario=="6a"|scenario=="6b"|scenario=="6d"){
     source("dat_sim_cox_scenario1.R")
     dat.dev<-dat
     dat.long.dev<-dat.long
@@ -60,7 +60,6 @@ for(i in 1:Nsim){
     dat.val<-dat
     dat.long.val<-dat.long
   
-    source("dat_sim_cox_counterfactual_scenario1.R")
   }
   
   if(scenario==2){
@@ -72,7 +71,6 @@ for(i in 1:Nsim){
     dat.val<-dat
     dat.long.val<-dat.long
     
-    source("dat_sim_cox_counterfactual_scenario1.R")
   }
   
   if(scenario==3){
@@ -83,9 +81,45 @@ for(i in 1:Nsim){
     source("dat_sim_cox_scenario3.R")
     dat.val<-dat
     dat.long.val<-dat.long
-    
-    source("dat_sim_cox_counterfactual_scenario1.R")
+
   }
+  
+  if(scenario=="4a"){
+    source("dat_sim_cox_scenario1.R")
+    dat.dev<-dat
+    dat.long.dev<-dat.long
+    
+    source("dat_sim_cox_scenario4a.R")
+    dat.val<-dat
+    dat.long.val<-dat.long
+    
+  }
+  
+  if(scenario=="4b"){
+    source("dat_sim_cox_scenario1.R")
+    dat.dev<-dat
+    dat.long.dev<-dat.long
+    
+    source("dat_sim_cox_scenario4b.R")
+    dat.val<-dat
+    dat.long.val<-dat.long
+    
+  }
+  
+  if(scenario=="6c"){
+    source("dat_sim_cox_scenario1.R")
+    dat.dev<-dat
+    dat.long.dev<-dat.long
+    
+    source("dat_sim_cox_scenario6c.R")
+    dat.val<-dat
+    dat.long.val<-dat.long
+
+  }
+  
+  #---
+  #Simulate counterfactual validation data
+  source("dat_sim_cox_counterfactual_scenario1.R")
   
   #---
   #Model development (uses dat.long.dev)

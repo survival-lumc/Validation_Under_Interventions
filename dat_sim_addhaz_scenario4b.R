@@ -4,7 +4,7 @@
 #U is an individual frailty. 
 #People who do not have the event are censored at time 5.
 #
-#SCENARIO 1: basis scenario
+#SCENARIO 4b: mild violation of positivity assumption
 #------------------------------
 #------------------------------
 
@@ -34,6 +34,9 @@ mu.L<-10
 #model for A|L
 gamma.0=-2
 gamma.L=0.1
+
+#to introduce positivity violation
+gamma.0=-0.75
 
 #model for hazard
 alpha.0=0.2

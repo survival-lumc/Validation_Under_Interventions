@@ -6,10 +6,11 @@
 
 #----
 #set work directory
-
+setwd("M:\\1. Onderzoek\\Collaborations\\Ruth Keogh\\code\\final_simulation_files\\final_simulation_files_20230922")
 
 #----
 #import libraries
+.libPaths("M:/MyDocs/R/win-library/4.0")
 library(tidyverse)
 library(ggpubr)
 library(ggplot2)
@@ -42,14 +43,25 @@ n=3000
 #scenario 1: base scenario: same dgm for development and validation data 
 #scenario 2: different baseline hazard in development data: alpha.0 = - 1
 #scenario 3: as scenario 1 plus noise added to L (L*) when making predictions in the validation set 
+#scenarios 4: violation of positvity assumption (increasing chance of treatment)
+#scenarios 5: violation of exchangeability assumption (omitting L or only using L0 in weights model)
+#scenarios 6: violation of correct model specification assumption (weight model misspecified in different ways)
 scenario<-1; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
 scenario<-2; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.45; calib_lim_high <- 0.95; calib_risk_lim_high <- 1; model <- " additive hazards model"
 scenario<-3; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8; model <- " additive hazards model"
+scenario<-"4a"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.40; auc_ylim_high <- 0.85; calib_lim_low <- 0.45; calib_lim_high <- 1; calib_risk_lim_high <- 0.95; model <- " additive hazards model"
+scenario<-"4b"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.40; auc_ylim_high <- 0.75; calib_lim_low <- 0.45; calib_lim_high <- 1; calib_risk_lim_high <- 0.95; model <- " additive hazards model"
+scenario<-"5a"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-"5b"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-"6a"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-"6b"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-"6c"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
+scenario<-"6d"; censoring <- FALSE; cindex_ylim_low <- .48; cindex_ylim_high <- .625; auc_ylim_low <- 0.46; auc_ylim_high <- 0.70; calib_lim_low <- 0.40; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.85; model <- " additive hazards model"
 
 #perform analyses for Nsim simulated data sets of n individuals
 source("simulation_addhaz.R")
 
-#create results tables
+K#create results tables
 source("results_tables.R")
 
 #create results plots
@@ -57,6 +69,7 @@ source("results_plots.R")
 
 #---
 #print main results
+colMeans(descriptives_scenario)
 descr_KM_plot
 main_plots_together
 appendix_plots_together
@@ -65,7 +78,10 @@ table_cindex_wide
 table_auct_wide
 table_ipa_wide
 
-colMeans(descriptives_scenario)
+# explore positivity issues
+hist(dat.long.val$L.baseline)
+hist(dat.long.val$L.baseline[dat.long.val$in.dat.0==1])
+hist(dat.long.val$L.baseline[dat.long.val$in.dat.1==1])
 
 #---
 #save main plots in .png format
@@ -147,10 +163,10 @@ save(file=paste0("results_addhaz/calib_risk1_group_plot_","scenario_", scenario,
 # #------------------------------
 # #render latex code of main tables
 # 
-# xtable(table_OErisk_wide)
-# xtable(table_cindex_wide)
-# xtable(table_auct_wide)
-# xtable(table_ipa_wide)
+xtable(table_OErisk_wide)
+xtable(table_cindex_wide)
+xtable(table_auct_wide)
+xtable(table_ipa_wide)
 
 #------------------------
 #------------------------
@@ -168,10 +184,21 @@ n=3000
 # scenario 1: base scenario same dgm for development and validation data (gamma.0=-1, gamma.L = 0.5, alpha.0 = -2, alpha.L = 0.5, alpha. A= -0.5, alpha.U= 0.5)
 # scenario 2: different baseline hazard in development data (alpha.0 = - 1)
 # scenario 3: as scenario 1 plus noise added to L (L*) when making predictions in the validation set 
+# scenarios 4: violation of positvity assumption (increasing chance of treatment)
+# scenarios 5: violation of exchangeability assumption (omitting L or only using L0 in weights model)
+# scenarios 6: violation of correct model specification assumption (weight model misspecified in different ways)
 
 scenario <- 1; cindex_ylim_low <- .48; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.9; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
 scenario <- 2; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.73; calib_lim_low <- 0.1; calib_lim_high <- 1.0; calib_risk_lim_high <- 1.0 ;calib_events_lim_high <- (n/1000)*3000; model = " Cox model"
 scenario <- 3; cindex_ylim_low <- .52; cindex_ylim_high <- .675; auc_ylim_low <- 0.50; auc_ylim_high <- 0.70; calib_lim_low <- 0.1; calib_lim_high <- 0.9; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "4a"; cindex_ylim_low <- .48; cindex_ylim_high <- .75; auc_ylim_low <- 0.45; auc_ylim_high <- 0.95; calib_lim_low <- 0.1; calib_lim_high <- 1.0; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "4b"; cindex_ylim_low <- .48; cindex_ylim_high <- .75; auc_ylim_low <- 0.45; auc_ylim_high <- 0.95; calib_lim_low <- 0.1; calib_lim_high <- 1.0; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "5a"; cindex_ylim_low <- .48; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "5b"; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.50; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "6a"; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "6b"; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "6c"; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.54; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
+scenario <- "6d"; cindex_ylim_low <- .53; cindex_ylim_high <- .675; auc_ylim_low <- 0.52; auc_ylim_high <- 0.75; calib_lim_low <- 0.1; calib_lim_high <- 0.95; calib_risk_lim_high <- 0.8 ;calib_events_lim_high <- (n/1000)*1300; model = " Cox model"
 
 #Perform analyses for Nsim simulated data sets of n individuals
 source("simulation_cox.R")
@@ -192,6 +219,12 @@ table_OErisk_wide
 table_cindex_wide
 table_auct_wide
 table_ipa_wide
+
+# explore positivity issues
+
+hist(dat.long.val$L.baseline)
+hist(dat.long.val$L.baseline[dat.long.val$in.dat.1==1])
+hist(dat.long.val$L.baseline[dat.long.val$in.dat.0==1])
 
 #---
 #save main plots in .png format
@@ -276,7 +309,7 @@ ggsave(calib_risk1_group_plot, file=paste0("results_cox/calib_risk1_group_plot_"
 #------------------------------
 #render latex code of main tables
 
-# xtable(table_OErisk_wide)
-# xtable(table_cindex_wide)
-# xtable(table_auct_wide)
-# xtable(table_ipa_wide)
+ xtable(table_OErisk_wide)
+ xtable(table_cindex_wide)
+ xtable(table_auct_wide)
+ xtable(table_ipa_wide)

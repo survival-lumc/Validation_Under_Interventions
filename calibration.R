@@ -82,7 +82,7 @@ calib_risk0_group[i,,2]<-risk0_obs_grp
 #-----
 #observed risk in each decile of risk - "always treated"
 
-km.1.grp=survfit(Surv(time,time.stop,event)~strata(risk1_group),data=dat.1.merge,weights = dat.1.merge$ipw)
+km.1.grp=survfit(Surv(time,time.stop,event)~strata(risk1_group),data=dat.1.merge,weights = dat.1.merge$ipw1)
 
 risk1_obs_grp<-rep(NA,10)
 for(k in 1:10){

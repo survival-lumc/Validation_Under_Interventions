@@ -450,7 +450,7 @@ descr_KM_plot <- ggplot(data = descr_KM_curves_average, aes(x=time, y=average_ri
   geom_line(size=c(rep(1,51),rep(1,51),rep(1,51),rep(1,51)))+
   labs(x = "time",
        y = "cumulative risk of event",
-       title = paste0("Scenario ", ifelse((scenario==1| scenario==3),"1 + 3", "2")))+
+       title = paste0("Scenario ", ifelse((scenario==1| scenario==3 | scenario==5 | scenario ==6),"1 + 3 + 5 + 6", scenario)))+
   scale_colour_manual(name=NULL, values=cols,     labels=c(cf_treated="perfect validation data treated", cf_untreated="perfect validation data untreated", development = "development data", validation = "observational validation data"))+
   scale_linetype_manual(name=NULL, values=ltypes, labels=c(cf_treated="perfect validation data treated", cf_untreated="perfect validation data untreated", development = "development data", validation = "observational validation data"))+
   ylim(0,0.8)
