@@ -6,11 +6,9 @@
 
 #----
 #set work directory
-setwd("M:\\1. Onderzoek\\Collaborations\\Ruth Keogh\\code\\final_simulation_files\\final_simulation_files_20230922")
 
 #----
 #import libraries
-.libPaths("M:/MyDocs/R/win-library/4.0")
 library(tidyverse)
 library(ggpubr)
 library(ggplot2)
